@@ -1,45 +1,55 @@
-#include <stdio.h>
+#ifndef STRUCTS
+#define STRUCTS
+
+#include <unistd.h>
+#include <getopt.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <stdio.h>
 
-#include <pthread.h>
 #include <semaphore.h>
+#include <pthread.h>
 
-typedef enum PRODUCER
-{
-    frog,
-    escargot
-} PRODUCER;
+#define MAXFROGS 3
+#define MAXBELT 10
+#define MAXPRODUCED 100
 
-typedef enum CONSUMER
-{
-    Ethel,
-    Lucy
-} CONSUMER;
-
-typedef struct LIST
-{
-    PRODUCER type;
-    struct LIST * next;
-} LIST;
+#define FROG 0
+#define ESCARGOT 1
 
 typedef struct MIZZO
 {
-    PRODUCER prod;
-    CONSUMER cons;
+    char ** candyInBelt;
+    char ** name;
+    int * head;
+    int * tail;
+    int N;
+    int produced;
+    int consumed[2];
 
-    bool Ethel;
-    bool Lucy;
-    bool frog;
-    bool escargot;
-
-    int candyProduced;
-    int candyConsumed;
-    int candyMax;
-    int candyInBelt;
-    LIST * candyBeltList;
-
-    // semaphores
-    sem_t beltSem;
-    sem_t typeSem;
+    sem_t * beltMutex;
+    sem_t * maxFrogs;
+    sem_t * maxBelt;
+    sem_t * inBelt;
+    sem_t * maxProduced;
+    sem_t * maxConsumed;
 } MIZZO;
+
+MIZZO ethelThread;
+MIZZO lucyThread;
+MIZZO frogThread;
+MIZZO escargotThread;
+
+char * belt[10];
+char * names[4] = {"Ethel", "Lucy", "FrogBite", "Escargot"};
+pthread_t threads[4];
+
+sem_t beltMutex;
+sem_t maxFrogs;
+sem_t maxBelt;
+sem_t inBelt;
+sem_t maxProduced;
+sem_t maxConsumed;
+
+
+#endif // STRUCTS
+
