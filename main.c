@@ -54,7 +54,6 @@ void * producer(void * data) {
  *  Takes in a "MIZZO" data structure corresponding to a consumer
  *  thread. Lucy/Ethel consume the candy at the head of a queue.
 */
-
 void * consumer(void * data) {
     MIZZO *m = (MIZZO *) data;
     m->consumed[FROG] = 0;
