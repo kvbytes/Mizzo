@@ -40,7 +40,7 @@ MIZZO frogThread;
 MIZZO escargotThread;
 
 char * belt[10];
-char * names[4] = {"Ethel", "Lucy", "FrogBite", "Escargot"};
+char * names[4] = {"Ethel", "Lucy", "crunchy frog bite", "everlasting escargot sucker"};
 pthread_t threads[4];
 
 sem_t beltMutex;
