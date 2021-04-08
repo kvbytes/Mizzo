@@ -1,8 +1,20 @@
-#include "structs.h"
-#include "io.h"
+/*
+ *  Producer-Consumer Problem Using POSIX Threads and Semaphores
+ *  CS 570 - Operating Systems
+ *  Spring 2021
+*/
 
+#include "structs.h"
+
+/*  Producer
+ *
+ *  Takes in a "MIZZO" data structure corresponding to a producer
+ *  thread. Produces the candy and pushes it to the tail of a queue.
+*/
 void * producer(void * data) {
     MIZZO *m = (MIZZO *) data;
+
+    // initialize the total produced
     m->produced = 0;
     while (1) {
         if (sem_trywait(m->maxProduced) == -1) { // check if we've reached 100
@@ -13,12 +25,14 @@ void * producer(void * data) {
         }
         sem_wait(m->maxBelt);
         sem_wait(m->beltMutex);
+
+        // insert a candy at the end of the queue and increment production total
         m->candyInBelt[*m->tail] = *m->name;
         m->produced++;
 
         *m->tail = (*m->tail + 1) % 10;
 
-        // print the belt
+        // print the belt and added candy
         int frogs = frogThread.produced - (ethelThread.consumed[FROG] + lucyThread.consumed[FROG]);
         int escargots = escargotThread.produced - (ethelThread.consumed[ESCARGOT] + lucyThread.consumed[ESCARGOT]);
         printf("Belt: %d CFB  + %d EES", frogs, escargots);
@@ -35,12 +49,17 @@ void * producer(void * data) {
     }
 }
 
+/*  Consumer
+ *
+ *  Takes in a "MIZZO" data structure corresponding to a consumer
+ *  thread. Lucy/Ethel consume the candy at the head of a queue.
+*/
+
 void * consumer(void * data) {
     MIZZO *m = (MIZZO *) data;
     m->consumed[FROG] = 0;
     m->consumed[ESCARGOT] = 0;
     while (1) {
-        //Exit if consume limit has been hit
         if (sem_trywait(m->maxConsumed) == -1) {
             pthread_exit(NULL);
         }
@@ -53,7 +72,7 @@ void * consumer(void * data) {
             m->consumed[ESCARGOT]++;
         }
 
-        // print the belt
+        // print the belt and consumed candy
         int frogs = frogThread.produced - (ethelThread.consumed[FROG] + lucyThread.consumed[FROG]);
         int escargots = escargotThread.produced - (ethelThread.consumed[ESCARGOT] + lucyThread.consumed[ESCARGOT]);
         printf("Belt: %d CFB  + %d EES", frogs, escargots);
@@ -76,6 +95,7 @@ void * consumer(void * data) {
 
 int main(int argc, char *argv[]) {
 
+    // default flag values
     int EN = 0;
     int LN = 0;
     int fN = 0;
@@ -118,7 +138,7 @@ int main(int argc, char *argv[]) {
     frogThread.N = fN;
     escargotThread.N = eN;
 
-    // initialize mizzo arguments for all threads
+    // initialize MIZZO data structure arguments for all threads
     ethelThread.maxFrogs = lucyThread.maxFrogs = frogThread.maxFrogs = escargotThread.maxFrogs = &maxFrogs;
     ethelThread.maxBelt = lucyThread.maxBelt = frogThread.maxBelt = escargotThread.maxBelt = &maxBelt;
     ethelThread.beltMutex = lucyThread.beltMutex = frogThread.beltMutex = escargotThread.beltMutex = &beltMutex;
@@ -147,7 +167,7 @@ int main(int argc, char *argv[]) {
     pthread_join(threads[2], NULL);
     pthread_join(threads[3], NULL);
 
-
+    // destroy all semaphores
     sem_destroy(&maxFrogs);
     sem_destroy(&maxBelt);
     sem_destroy(&inBelt);
@@ -155,16 +175,12 @@ int main(int argc, char *argv[]) {
     sem_destroy(&maxProduced);
     sem_destroy(&maxConsumed);
 
-    // print totals
-
-
+    // print the summary report
     printf("\nPRODUCTION REPORT\n----------------------------------------\n");
     printf("crunchy frog bite producer generated %d candies\n", frogThread.produced);
     printf("everlasting escargot sucker producer generated %d candies\n", escargotThread.produced);
     printf("Lucy consumed %d CFB + %d EES = %d\n", lucyThread.consumed[FROG], lucyThread.consumed[ESCARGOT], lucyThread.consumed[FROG] + lucyThread.consumed[ESCARGOT]);
     printf("Ethel consumed %d CFB + %d EES = %d\n", ethelThread.consumed[FROG], ethelThread.consumed[ESCARGOT], ethelThread.consumed[FROG] + ethelThread.consumed[ESCARGOT]);
-
-
 
     pthread_exit(NULL);
     return 0;
