@@ -1,4 +1,5 @@
 #include "structs.h"
+#include "io.h"
 
 void * producer(void * data) {
     MIZZO *m = (MIZZO *) data;
@@ -7,7 +8,7 @@ void * producer(void * data) {
         if (sem_trywait(m->maxProduced) == -1) { // check if we've reached 100
             pthread_exit(NULL);
         }
-        if (*m->name == "FrogBite") { // check if there's 3 frogs
+        if (*m->name == "crunchy frog bite") { // check if there's 3 frogs
             sem_wait(m->maxFrogs);
         }
         sem_wait(m->maxBelt);
@@ -17,7 +18,15 @@ void * producer(void * data) {
 
         *m->tail = (*m->tail + 1) % 10;
 
-        printf("produced %s\n", *m->name);
+        // print the belt
+        int frogs = frogThread.produced - (ethelThread.consumed[FROG] + lucyThread.consumed[FROG]);
+        int escargots = escargotThread.produced - (ethelThread.consumed[ESCARGOT] + lucyThread.consumed[ESCARGOT]);
+        printf("Belt: %d CFB  + %d EES", frogs, escargots);
+        printf(" = %d. ", frogs + escargots);
+        printf("Added %s. ", *m->name);
+        printf("Produced %d CFB  + %d EES", frogThread.produced, escargotThread.produced);
+        printf(" = %d. \n", frogThread.produced + escargotThread.produced);
+        //printf("in %.3f s.\n", elapsed_s());
 
         sem_post(m->beltMutex);
         sem_post(m->inBelt);
@@ -37,14 +46,23 @@ void * consumer(void * data) {
         }
         sem_wait(m->inBelt);
         sem_wait(m->beltMutex);
-        if (m->candyInBelt[*m->head] == "FrogBite") {
+        if (m->candyInBelt[*m->head] == "crunchy frog bite") {
             sem_post(m->maxFrogs);
             m->consumed[FROG]++;
         } else {
             m->consumed[ESCARGOT]++;
         }
 
-        printf("%s consumed %s\n", *m->name, m->candyInBelt[*m->head]);
+        // print the belt
+        int frogs = frogThread.produced - (ethelThread.consumed[FROG] + lucyThread.consumed[FROG]);
+        int escargots = escargotThread.produced - (ethelThread.consumed[ESCARGOT] + lucyThread.consumed[ESCARGOT]);
+        printf("Belt: %d CFB  + %d EES", frogs, escargots);
+        printf(" = %d. ", frogs + escargots);
+        printf("%s consumed %s. ", *m->name, m->candyInBelt[*m->head]);
+        printf("%s totals: %d CFB  + %d EES\n", *m->name, lucyThread.consumed[FROG], lucyThread.consumed[ESCARGOT]);
+        //printf(" consumed in %.3f s.\n", elapsed_s());
+
+        //printf("%s consumed %s\n", *m->name, m->candyInBelt[*m->head]);
 
         m->candyInBelt[*m->head] = "";
         *m->head = (*m->head + 1) % 10;
@@ -67,16 +85,15 @@ int main(int argc, char *argv[]) {
     int tail = 0;
 
     int Option;
-    //int flagValues[4] = {0, 0, 0, 0};
     while ((Option = getopt(argc, argv, "E:L:f:e:")) != -1) {
         switch (Option) {
-            case 'E' :
+            case 'E':
                 EN = atoi(optarg);
                 break;
-            case 'L' :
+            case 'L':
                 LN = atoi(optarg);
                 break;
-            case 'f' :
+            case 'f':
                 fN = atoi(optarg);
                 break;
             case 'e':
@@ -139,11 +156,13 @@ int main(int argc, char *argv[]) {
     sem_destroy(&maxConsumed);
 
     // print totals
-    printf("\n\n");
-    printf("frogs produced: %d\n", frogThread.produced);
-    printf("escargots produced: %d\n", escargotThread.produced);
-    printf("Lucy consumed %d frogs and %d escargots = %d\n", lucyThread.consumed[FROG], lucyThread.consumed[ESCARGOT], lucyThread.consumed[FROG] + lucyThread.consumed[ESCARGOT]);
-    printf("Ethel consumed %d frogs and %d escargots = %d\n", ethelThread.consumed[FROG], ethelThread.consumed[ESCARGOT], ethelThread.consumed[FROG] + ethelThread.consumed[ESCARGOT]);
+
+
+    printf("\nPRODUCTION REPORT\n----------------------------------------\n");
+    printf("crunchy frog bite producer generated %d candies\n", frogThread.produced);
+    printf("everlasting escargot sucker producer generated %d candies\n", escargotThread.produced);
+    printf("Lucy consumed %d CFB + %d EES = %d\n", lucyThread.consumed[FROG], lucyThread.consumed[ESCARGOT], lucyThread.consumed[FROG] + lucyThread.consumed[ESCARGOT]);
+    printf("Ethel consumed %d CFB + %d EES = %d\n", ethelThread.consumed[FROG], ethelThread.consumed[ESCARGOT], ethelThread.consumed[FROG] + ethelThread.consumed[ESCARGOT]);
 
 
 
