@@ -8,6 +8,7 @@
 
 #include <semaphore.h>
 #include <pthread.h>
+#include <time.h>
 
 // macros
 #define MAXFROGS 3
@@ -52,6 +53,12 @@ char * belt[10];
 char * names[4] = {"Ethel", "Lucy", "crunchy frog bite", "everlasting escargot sucker"};
 pthread_t threads[4];
 
+double elapsed;
+//clock_t start;
+//clock_t current;
+struct timespec start;
+struct timespec current;
+
 sem_t beltMutex;
 sem_t maxFrogs;
 sem_t maxBelt;
@@ -61,4 +68,3 @@ sem_t maxConsumed;
 
 
 #endif // STRUCTS
-
