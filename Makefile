@@ -5,4 +5,4 @@
 #       RedID: 822600994	
 #       CSSC : cssc3419
 main: main.c
-	gcc -g -pthread -std=c11 -o mizzo main.c
+	gcc -std=gnu99 -o mizzo main.c -lpthread -lrt
