@@ -14,7 +14,7 @@
  *      pointers
 */
 void * producer(void * data) {
-    MIZZO *m = (MIZZO *) data;
+    MIZZO * m = (MIZZO *) data;
 
     // initialize the total produced
     m->produced = 0;
@@ -35,9 +35,11 @@ void * producer(void * data) {
         long seconds = current.tv_sec - start.tv_sec;
         long nanoseconds = current.tv_nsec - start.tv_nsec;
         elapsed = seconds + nanoseconds*1e-9;
-        // print the belt and produced candy
+
         int frogs = frogThread.produced - (ethelThread.consumed[FROG] + lucyThread.consumed[FROG]);
         int escargots = escargotThread.produced - (ethelThread.consumed[ESCARGOT] + lucyThread.consumed[ESCARGOT]);
+
+        // print the belt and produced candy
         printf("Belt: %d CFB  + %d EES", frogs, escargots);
         printf(" = %d. ", frogs + escargots);
         printf("Added %s. ", *m->name);
@@ -61,7 +63,7 @@ void * producer(void * data) {
 */
 
 void * consumer(void * data) {
-    MIZZO *m = (MIZZO *) data;
+    MIZZO * m = (MIZZO *) data;
     m->consumed[FROG] = 0;
     m->consumed[ESCARGOT] = 0;
     while (1) {
@@ -79,9 +81,11 @@ void * consumer(void * data) {
         long seconds = current.tv_sec - start.tv_sec;
         long nanoseconds = current.tv_nsec - start.tv_nsec;
         elapsed = seconds + nanoseconds*1e-9;
-        // print the belt and consumed candy
+
         int frogs = frogThread.produced - (ethelThread.consumed[FROG] + lucyThread.consumed[FROG]);
         int escargots = escargotThread.produced - (ethelThread.consumed[ESCARGOT] + lucyThread.consumed[ESCARGOT]);
+
+        // print the belt and consumed candy
         printf("Belt: %d CFB  + %d EES", frogs, escargots);
         printf(" = %d. ", frogs + escargots);
         printf("%s consumed %s. ", *m->name, m->candyInBelt[*m->head]);
@@ -109,8 +113,8 @@ int main(int argc, char *argv[]) {
     int head = 0;
     int tail = 0;
 
+    // start the timer
     elapsed = 0;
-    //start = clock();
     clock_gettime(CLOCK_REALTIME, &start);
 
     int Option;
@@ -189,8 +193,8 @@ int main(int argc, char *argv[]) {
     printf("everlasting escargot sucker producer generated %d candies\n", escargotThread.produced);
     printf("Lucy consumed %d CFB + %d EES = %d\n", lucyThread.consumed[FROG], lucyThread.consumed[ESCARGOT], lucyThread.consumed[FROG] + lucyThread.consumed[ESCARGOT]);
     printf("Ethel consumed %d CFB + %d EES = %d\n", ethelThread.consumed[FROG], ethelThread.consumed[ESCARGOT], ethelThread.consumed[FROG] + ethelThread.consumed[ESCARGOT]);
-    //current = clock();
-    //elapsed = (double)(current - start) / CLOCKS_PER_SEC;
+
+    // get the elapsed time
     clock_gettime(CLOCK_REALTIME, &current);
     long seconds = current.tv_sec - start.tv_sec;
     long nanoseconds = current.tv_nsec - start.tv_nsec;
@@ -200,5 +204,3 @@ int main(int argc, char *argv[]) {
     pthread_exit(NULL);
     return 0;
 }
-
-
