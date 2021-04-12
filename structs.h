@@ -1,3 +1,19 @@
+/* Karla Barrios (Section 05 - 12:30pm)
+ *       RedID: 823557131
+ *       CSSC : cssc3502
+ *  Jordan Duong (Section 03 - 11:00am)
+ *       RedID: 822600994
+ *       CSSC : cssc3419
+ *
+ *  Pair Programmer Affidavit: We the undersigned promise that we have in good faith
+ *  attempted to follow the principles of pair programming. Although we were free to discuss
+ *  ideas with others, the implementation is our own. We have shared a common workspace and
+ *  taken turns at the keyboard for the majority of the work that we are submitting.
+ *  Furthermore, any non programming portions of the assignment were done independently.
+ *  We recognize that should this not be the case, we will be subject to penalties as outlined
+ *  in the course syllabus.
+ */
+
 #ifndef STRUCTS
 #define STRUCTS
 
