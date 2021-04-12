@@ -40,11 +40,11 @@ void * producer(void * data) {
         int escargots = escargotThread.produced - (ethelThread.consumed[ESCARGOT] + lucyThread.consumed[ESCARGOT]);
 
         // print the belt and produced candy
-        printf("Belt: %d CFB  + %d EES", frogs, escargots);
+        printf("Belt: %d CFB + %d EES", frogs, escargots);
         printf(" = %d. ", frogs + escargots);
         printf("Added %s. ", *m->name);
-        printf("Produced %d CFB  + %d EES", frogThread.produced, escargotThread.produced);
-        printf(" = %d. \n", frogThread.produced + escargotThread.produced);
+        printf("Produced: %d CFB + %d EES", frogThread.produced, escargotThread.produced);
+        printf(" = %d ", frogThread.produced + escargotThread.produced);
         printf("in %.3f s.\n", elapsed);
 
         sem_post(m->beltMutex);
@@ -86,10 +86,10 @@ void * consumer(void * data) {
         int escargots = escargotThread.produced - (ethelThread.consumed[ESCARGOT] + lucyThread.consumed[ESCARGOT]);
 
         // print the belt and consumed candy
-        printf("Belt: %d CFB  + %d EES", frogs, escargots);
+        printf("Belt: %d CFB + %d EES", frogs, escargots);
         printf(" = %d. ", frogs + escargots);
         printf("%s consumed %s. ", *m->name, m->candyInBelt[*m->head]);
-        printf("%s totals: %d CFB  + %d EES\n", *m->name, lucyThread.consumed[FROG], lucyThread.consumed[ESCARGOT]);
+        printf("%s totals: %d CFB + %d EES", *m->name, lucyThread.consumed[FROG], lucyThread.consumed[ESCARGOT]);
         printf(" consumed in %.3f s.\n", elapsed);
 
         m->candyInBelt[*m->head] = "";
